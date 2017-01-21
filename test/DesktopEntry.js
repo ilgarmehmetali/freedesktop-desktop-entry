@@ -16,7 +16,7 @@ module.exports = {
       "Name": {
         "value": "Foo Viewer",
         "comment": " inline comment",
-        "precedingComment": "# precedingComment of an entry"
+        "precedingComment": "# precedingComment of an entry\n"
       },
       "Comment": {
         "value": "The best viewer for Foo objects available!",
