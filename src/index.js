@@ -27,33 +27,41 @@ export default class DesktopEntry {
   }
 
   setValue(group, key, value) {
+    this._createIfNotExists(group, key);
+
     this._data[group].entries[key].value = value;
   }
 
   addValue(group, key, value) {
+    this._createIfNotExists(group, key);
+
     if(Array.isArray(this._data[group].entries[key].value))
       this._data[group].entries[key].value.push(value);
     else
       this._data[group].entries[key].value = [this._data[group].entries[key].value, value];
   }
 
-  setComment(group, key, comment) {
+  setComment(...args) {
     if(arguments.length == 3) {
       let [group, key, comment] = arguments;
+      this._createIfNotExists(group, key);
       this._data[group].entries[key].comment = comment;
     } else if(arguments.length == 2){
       let [group, comment] = arguments;
+      this._createIfNotExists(group);
       this._data[group].comment = comment;
     }
   }
 
-  setPrecedingComment(group, key, comment) {
+  setPrecedingComment(...args) {
     if(arguments.length == 3) {
       let [group, key, comment] = arguments;
-      this._data[group].precedingComment = comment + "\n";
+      this._createIfNotExists(group, key);
+      this._data[group].entries[key].precedingComment = comment;
     } else if(arguments.length == 2){
       let [group, comment] = arguments;
-      this._data[group].precedingComment = comment + "\n";
+      this._createIfNotExists(group);
+      this._data[group].precedingComment = comment;
     }
   }
 
@@ -72,6 +80,14 @@ export default class DesktopEntry {
           });
         }
     );
+  }
+
+  _createIfNotExists(group, key) {
+    if(key){
+      this._data[group].entries[key] = { value: "", comment: "", precedingComment: ""};
+    } else {
+      this._data[group] = { comment: "", precedingComment: "", entries: {}};
+    }
   }
 
 
@@ -121,7 +137,7 @@ export default class DesktopEntry {
           value.value = `"${value.value}"`;
         }
 
-        result += value.precedingComment;
+        result += value.precedingComment + "\n";
 
         if(value.comment.length > 0) value.comment = "#" + value.comment;
         result += `${key} = ${value.value} ${value.comment}\n`;
