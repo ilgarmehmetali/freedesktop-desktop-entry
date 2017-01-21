@@ -4,6 +4,7 @@
 [Desktop Entry] # inlineee
 Version=1.0
 Type=Application
+# precedingComment of an entry
 Name=Foo Viewer # inline comment
 Comment=The best viewer for Foo objects available!
 TryExec=fooview
