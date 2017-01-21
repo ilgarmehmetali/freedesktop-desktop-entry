@@ -17,7 +17,7 @@ export default class DesktopEntry {
       this._decode();
     } else if(Object.prototype.toString.call( value ) === '[object Object]'){
       this._path = null;
-      this._data = value;
+      this._data = JSON.parse(JSON.stringify(value));
       this._encode();
     }
   }
