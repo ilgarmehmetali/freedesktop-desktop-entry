@@ -83,9 +83,9 @@ export default class DesktopEntry {
   }
 
   _createIfNotExists(group, key) {
-    if(key){
+    if(key && !this._data[group].entries[key]){
       this._data[group].entries[key] = { value: "", comment: "", precedingComment: ""};
-    } else {
+    } else if(!this._data[group]){
       this._data[group] = { comment: "", precedingComment: "", entries: {}};
     }
   }
