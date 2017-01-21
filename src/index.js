@@ -117,6 +117,10 @@ export default class DesktopEntry {
 
       if(inlineComment.length > 0) inlineComment = "#" + inlineComment;
 
+      if(!groupComment.endsWith("\n"))
+        groupComment += "\n";
+      if(!result.endsWith("\n\n") && !groupComment.startsWith("\n"))
+        groupComment = "\n" + groupComment;
       result += groupComment;
       result += `[${name}] ${inlineComment}\n`;
 
@@ -137,7 +141,10 @@ export default class DesktopEntry {
           value.value = `"${value.value}"`;
         }
 
-        result += value.precedingComment + "\n";
+        if(value.precedingComment.length > 0) {
+          value.precedingComment += value.precedingComment + "\n";
+        }
+        result += value.precedingComment;
 
         if(value.comment.length > 0) value.comment = "#" + value.comment;
         result += `${key} = ${value.value} ${value.comment}\n`;
