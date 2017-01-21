@@ -1,0 +1,54 @@
+# Freedesktop Destop Entry
+
+This package allows you to read and write Desktop Entry files.
+
+With this package you can;
+* serialize the opened Desktop Entry files to JSON.
+* make changes to entry file
+* overwrite the orginal file or save to another location
+* preserve comments
+
+##### constructor
+```javascript
+let desktopEntry = new DesktopEntry("/usr/share/applications/DesktopEntry.desktop");
+```
+
+##### get JSON
+```javascript
+console.log(JSON.stringify(desktopEntry.JSON, null, 2));
+```
+##### setValue
+"Categories=Network;WebBrowser" => "Categories=Game"
+```javascript
+desktopEntry.setValue("Desktop Entry", "Categories", "Game")
+```
+
+##### addValue
+Adds value to entry: "Categories=Network;WebBrowser" => "Categories=Network;WebBrowser;Game"
+```javascript
+desktopEntry.addValue("Desktop Entry", "Categories", "Game")
+```
+
+##### setComment
+```javascript
+desktopEntry.setComment("Desktop Entry", "Exec", "Beware!!")
+```
+
+##### setPrecedingComment
+```javascript
+desktopEntry.setPrecedingComment("Desktop Entry", "#\n#Comment \n#preceding \n#this \n#entry")
+```
+
+##### save
+Returns a promise
+```javascript
+desktopEntry.save()
+```
+
+##### saveTo
+Returns a promise
+```javascript
+desktopEntry.saveTo("/new/path/newfile.desktop")
+```
+
+Used some parts of code from [node-file-parser](https://github.com/Skelware/node-file-parser)
