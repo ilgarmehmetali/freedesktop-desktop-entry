@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Freedesktop Desktop Entry",
   "main": "dist/index.js",
+  "keywords": [
+    "desktop",
+    "desktop entry",
+    "freedesktop"
+  ],
   "scripts": {
     "dist": "rm -rf dist/* && npm run compile",
     "compile": "mkdir -p dist && babel src --out-file dist/index.js",
@@ -10,7 +15,13 @@
     "test": "npm run dist && require-self && mocha test"
   },
   "author": "Mehmet Ali İLGAR",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/ilgarmehmetali/freedesktop-desktop-entry.git"
+  },
+  "bugs": "https://github.com/ilgarmehmetali/freedesktop-desktop-entry/issues",
   "license": "MIT",
+  "os" : [ "linux" ],
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-core": "^6.21.0",
