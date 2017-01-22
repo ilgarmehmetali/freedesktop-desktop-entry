@@ -9,7 +9,23 @@ With this package you can;
 * preserve comments
 
 ##### constructor
+```JSON.parse(JSON.stringify(value)) ``` is used to clone passed object.
+
 ```javascript
+module.exports = {
+  "Desktop Entry": {
+    "comment": "inline comment",
+    "precedingComment": "\n\n# preceding multiline comment\n",
+    "entries": {
+      "Type": { "value": "Application", "comment": "", "precedingComment": "" },
+      "Name": { "value": "Foo Viewer", "comment": " inline comment", "precedingComment": "# precedingComment of an entry\n" },
+      "Exec": { "value": "fooview %F", "comment": "", "precedingComment": "" },
+      "Icon": { "value": "fooview", "comment": "", "precedingComment": "" }
+    }
+  }
+}
+
+let desktopEntry = new DesktopEntry(obj);
 let desktopEntry = new DesktopEntry("/usr/share/applications/DesktopEntry.desktop");
 ```
 
@@ -36,7 +52,7 @@ desktopEntry.setComment("Desktop Entry", "Exec", "Beware!!")
 
 ##### setPrecedingComment
 ```javascript
-desktopEntry.setPrecedingComment("Desktop Entry", "#\n#Comment \n#preceding \n#this \n#entry")
+desktopEntry.setPrecedingComment("Desktop Entry", ["Comment preceding this entry", "Second line"])
 ```
 
 ##### save
