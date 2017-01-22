@@ -12,7 +12,7 @@ With this package you can;
 ```JSON.parse(JSON.stringify(value)) ``` is used to clone passed object.
 
 ```javascript
-module.exports = {
+let obj = {
   "Desktop Entry": {
     "comment": "inline comment",
     "precedingComment": ["preceding multiline comment", "second line"],
