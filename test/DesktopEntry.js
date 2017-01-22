@@ -1,47 +1,53 @@
 module.exports = {
   "Desktop Entry": {
     "comment": " inlineee",
-    "precedingComment": "\n\n# normal comment\n",
+    "precedingComment": [
+      "",
+      "",
+      " normal comment"
+    ],
     "entries": {
       "Version": {
         "value": "1.0",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Type": {
         "value": "Application",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Name": {
         "value": "Foo Viewer",
         "comment": " inline comment",
-        "precedingComment": "# precedingComment of an entry\n"
+        "precedingComment": [
+          " precedingComment of an entry"
+        ]
       },
       "Comment": {
         "value": "The best viewer for Foo objects available!",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "TryExec": {
         "value": "fooview",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Exec": {
         "value": "fooview %F",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Icon": {
         "value": "fooview",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "MimeType": {
         "value": "image/x-foo",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Actions": {
         "value": [
@@ -49,44 +55,48 @@ module.exports = {
           "Create"
         ],
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       }
     }
   },
   "Desktop Action Gallery": {
     "comment": "",
-    "precedingComment": "\n",
+    "precedingComment": [
+      ""
+    ],
     "entries": {
       "Exec": {
         "value": "fooview --gallery",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Name": {
         "value": "Browse Gallery",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       }
     }
   },
   "Desktop Action Create": {
     "comment": "",
-    "precedingComment": "\n",
+    "precedingComment": [
+      ""
+    ],
     "entries": {
       "Exec": {
         "value": "fooview --create-new",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Name": {
         "value": "Create a new Foo!",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       },
       "Icon": {
         "value": "fooview-new",
         "comment": "",
-        "precedingComment": ""
+        "precedingComment": []
       }
     }
   }

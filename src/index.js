@@ -56,10 +56,13 @@ export default class DesktopEntry {
   setPrecedingComment(...args) {
     if(arguments.length == 3) {
       let [group, key, comment] = arguments;
+      if (!Array.isArray(comment)) throw "PrecedingComment should be an array";
       this._createIfNotExists(group, key);
       this._data[group].entries[key].precedingComment = comment;
     } else if(arguments.length == 2){
       let [group, comment] = arguments;
+      if (!Array.isArray(comment)) throw "PrecedingComment should be an array";
+      //if (comment[0] !== "") comment.unshift("");
       this._createIfNotExists(group);
       this._data[group].precedingComment = comment;
     }
@@ -84,7 +87,7 @@ export default class DesktopEntry {
 
   _createIfNotExists(group, key) {
     if(key && !this._data[group].entries[key]){
-      this._data[group].entries[key] = { value: "", comment: "", precedingComment: ""};
+      this._data[group].entries[key] = { value: "", comment: "", precedingComment: []};
     } else if(!this._data[group]){
       this._data[group] = { comment: "", precedingComment: "", entries: {}};
     }
@@ -111,17 +114,18 @@ export default class DesktopEntry {
     for (var i = 0; i < groups.length; i++) {
       var name = groups[i];
       var entries = data[name].entries;
-      var groupComment = data[name].precedingComment;
+      var precedingComment = data[name].precedingComment;
       var inlineComment = data[name].comment;
       var pairs = Object.keys(entries);
 
       if(inlineComment.length > 0) inlineComment = "#" + inlineComment;
 
-      if(!groupComment.endsWith("\n"))
-        groupComment += "\n";
-      if(!result.endsWith("\n\n") && !groupComment.startsWith("\n"))
-        groupComment = "\n" + groupComment;
-      result += groupComment;
+      if (precedingComment[0] !== "") precedingComment.unshift("");
+      precedingComment.forEach(function (comment) {
+        if(comment.trim().length>0) comment = "#"+comment;
+        result += comment + "\n";
+      });
+
       result += `[${name}] ${inlineComment}\n`;
 
       for (var j = 0; j < pairs.length; j++) {
@@ -141,10 +145,10 @@ export default class DesktopEntry {
           value.value = `"${value.value}"`;
         }
 
-        if(value.precedingComment.length > 0) {
-          value.precedingComment += value.precedingComment + "\n";
-        }
-        result += value.precedingComment;
+        value.precedingComment.forEach(function (comment) {
+          if(comment.trim().length>0) comment = "#"+comment;
+          result += comment + "\n";
+        });
 
         if(value.comment.length > 0) value.comment = "#" + value.comment;
         result += `${key} = ${value.value} ${value.comment}\n`;
@@ -167,13 +171,13 @@ export default class DesktopEntry {
 
     var groups = {};
     var group = null;
-    var precedingComment = "";
+    var precedingComment = [];
     for (var i = 0; i < lines.length; i++) {
       let line = lines[i].trim();
       let comment = "";
 
       if(line.startsWith("#") || line == ""){
-        precedingComment += line + "\n";
+        precedingComment.push(line.replace(/^(#+)/, ""));
         continue;
       }
 
@@ -182,12 +186,13 @@ export default class DesktopEntry {
       var newGroup = this._getNewGroup(line);
       if (newGroup) {
         group = newGroup;
+        if (precedingComment[0] === "") precedingComment.shift();
         groups[group] = {
           comment: comment,
           precedingComment: precedingComment,
           entries: {}
         };
-        precedingComment = "";
+        precedingComment = [];
         continue;
       }
 
@@ -208,17 +213,18 @@ export default class DesktopEntry {
         }
 
         if (group) {
-          this.addToGroup(groups, group, key, value, comment, precedingComment);
+          if (precedingComment[0] === "") precedingComment.shift();
+          groups[group].entries[key] = {
+            value: value,
+            comment: comment,
+            precedingComment: precedingComment
+          };
         }
-        precedingComment = "";
+        precedingComment = [];
       }
     }
 
     this._data = groups;
-  }
-
-  addToGroup(groups, group, key, value, comment, precedingComment) {
-    groups[group].entries[key] = {value: value, comment: comment, precedingComment: precedingComment};
   }
 
   /**
