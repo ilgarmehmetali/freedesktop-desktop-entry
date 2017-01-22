@@ -1,3 +1,6 @@
+let path = require('path');
+let os = require('os');
+let fs = require('fs');
 let chai = require('chai');
 let expect = chai.expect;
 let DesktopEntry = require('freedesktop-desktop-entry');
@@ -74,25 +77,93 @@ describe('DesktopEntry', function() {
 
   it('setPrecedingComment(group, key, comment) should create "key" in "group" and set its "precedingComment" if doesnt exists', function() {
     let desktopEntry = new DesktopEntry(obj);
-    desktopEntry.setPrecedingComment("Desktop Entry", "Exec",  "preceding comment");
-    expect(desktopEntry.JSON["Desktop Entry"].entries["Exec"].precedingComment).to.equal("preceding comment");
+    desktopEntry.setPrecedingComment("Desktop Entry", "Exec",  ["preceding comment"]);
+    expect(desktopEntry.JSON["Desktop Entry"].entries["Exec"].precedingComment).to.eql(["preceding comment"]);
   });
 
   it('setPrecedingComment(group, key, comment) should change "precedingComment" of the "key" from "group" if it already exists', function() {
     let desktopEntry = new DesktopEntry(obj);
-    desktopEntry.setPrecedingComment("Desktop Entry", "Name", "new preceding comment");
-    expect(desktopEntry.JSON["Desktop Entry"].entries["Name"].precedingComment).to.equal("new preceding comment");
+    desktopEntry.setPrecedingComment("Desktop Entry", "Name", ["new preceding comment"]);
+    expect(desktopEntry.JSON["Desktop Entry"].entries["Name"].precedingComment).to.eql(["new preceding comment"]);
   });
 
   it('setPrecedingComment(group, comment) should create "group" and set its "precedingComment" if doesnt exists', function() {
     let desktopEntry = new DesktopEntry(obj);
-    desktopEntry.setPrecedingComment("Desktop Action Gallery", "preceding group comment");
-    expect(desktopEntry.JSON["Desktop Action Gallery"].precedingComment).to.equal("preceding group comment");
+    desktopEntry.setPrecedingComment("Desktop Action Gallery", ["preceding group comment"]);
+    expect(desktopEntry.JSON["Desktop Action Gallery"].precedingComment).to.eql(["preceding group comment"]);
   });
 
   it('setPrecedingComment(group, comment) should change "precedingComment" of the "group" if it already exists', function() {
     let desktopEntry = new DesktopEntry(obj);
-    desktopEntry.setPrecedingComment("Desktop Entry", "new preceding group comment");
-    expect(desktopEntry.JSON["Desktop Entry"].precedingComment).to.equal("new preceding group comment");
+    desktopEntry.setPrecedingComment("Desktop Entry", ["new preceding group comment"]);
+    expect(desktopEntry.JSON["Desktop Entry"].precedingComment).to.eql(["new preceding group comment"]);
+  });
+
+  it('saveTo(path) should encode and save desktop entry to "path" with correct data', function() {
+    let desktopEntry = new DesktopEntry(obj);
+    desktopEntry.setValue("Desktop Entry", "Keywords", "Game");
+    desktopEntry.setValue("Desktop Entry", "Name", "New Name");
+    desktopEntry.setComment("Desktop Entry", "Exec", "runs the app");
+    desktopEntry.setComment("Desktop Entry", "Name", "new comment");
+    desktopEntry.setComment("Desktop Action Gallery", "group comment");
+    desktopEntry.setComment("Desktop Entry", "new group comment");
+    desktopEntry.setPrecedingComment("Desktop Entry", "Exec",  ["preceding comment"]);
+    desktopEntry.setPrecedingComment("Desktop Entry", "Name", ["new preceding comment"]);
+    desktopEntry.setPrecedingComment("Desktop Action Gallery", ["preceding group comment"]);
+    desktopEntry.setPrecedingComment("Desktop Entry", ["new preceding group comment"]);
+
+    let epoch = (new Date).getTime();
+    let savePath = path.join(os.tmpdir(), "freedesktop-desktop-entry-" + epoch + ".desktop");
+    desktopEntry.saveTo(savePath);
+    expect(fs.readFileSync(savePath, "utf8")).to.equal(desktopEntry._rawData);
+
+    let newDesktopEntry = new DesktopEntry(savePath);
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Keywords"].value).to.equal("Game");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Name"].value).to.equal("New Name");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Exec"].comment).to.equal("runs the app");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Name"].comment).to.equal("new comment");
+    expect(newDesktopEntry.JSON["Desktop Action Gallery"].comment).to.equal("group comment");
+    expect(newDesktopEntry.JSON["Desktop Entry"].comment).to.equal("new group comment");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Exec"].precedingComment).to.eql(["preceding comment"]);
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Name"].precedingComment).to.eql(["new preceding comment"]);
+    expect(newDesktopEntry.JSON["Desktop Action Gallery"].precedingComment).to.eql(["preceding group comment"]);
+    expect(newDesktopEntry.JSON["Desktop Entry"].precedingComment).to.eql(["new preceding group comment"]);
+    fs.unlinkSync(savePath);
+  });
+
+  it('save() should encode and overwrite opened desktop entry file with correct data', function() {
+    let epoch = (new Date).getTime();
+    let savePath = path.join(os.tmpdir(), "freedesktop-desktop-entry-" + epoch + ".desktop");
+
+    fs.writeFileSync(savePath, fs.readFileSync(desktopFilePath, "utf8"), 'utf8');
+    let desktopEntry = new DesktopEntry(savePath);
+    desktopEntry.setValue("Desktop Entry", "Keywords", "Game");
+    desktopEntry.setValue("Desktop Entry", "Name", "New Name");
+    desktopEntry.setComment("Desktop Entry", "Exec", "runs the app");
+    desktopEntry.setComment("Desktop Entry", "Name", "new comment");
+    desktopEntry.setComment("Desktop Action Gallery", "group comment");
+    desktopEntry.setComment("Desktop Entry", "new group comment");
+    desktopEntry.setPrecedingComment("Desktop Entry", "Exec",  ["preceding comment"]);
+    desktopEntry.setPrecedingComment("Desktop Entry", "Name", ["new preceding comment"]);
+    desktopEntry.setPrecedingComment("Desktop Action Gallery", ["preceding group comment"]);
+    desktopEntry.setPrecedingComment("Desktop Entry", ["new preceding group comment"]);
+
+    desktopEntry.save();
+
+    let newDesktopEntry = new DesktopEntry(savePath);
+
+    expect(newDesktopEntry._rawData).to.equal(desktopEntry._rawData);
+
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Keywords"].value).to.equal("Game");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Name"].value).to.equal("New Name");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Exec"].comment).to.equal("runs the app");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Name"].comment).to.equal("new comment");
+    expect(newDesktopEntry.JSON["Desktop Action Gallery"].comment).to.equal("group comment");
+    expect(newDesktopEntry.JSON["Desktop Entry"].comment).to.equal("new group comment");
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Exec"].precedingComment).to.eql(["preceding comment"]);
+    expect(newDesktopEntry.JSON["Desktop Entry"].entries["Name"].precedingComment).to.eql(["new preceding comment"]);
+    expect(newDesktopEntry.JSON["Desktop Action Gallery"].precedingComment).to.eql(["preceding group comment"]);
+    expect(newDesktopEntry.JSON["Desktop Entry"].precedingComment).to.eql(["new preceding group comment"]);
+    fs.unlinkSync(savePath);
   });
 });
