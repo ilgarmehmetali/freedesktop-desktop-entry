@@ -15,12 +15,12 @@ With this package you can;
 module.exports = {
   "Desktop Entry": {
     "comment": "inline comment",
-    "precedingComment": "\n\n# preceding multiline comment\n",
+    "precedingComment": ["preceding multiline comment", "second line"],
     "entries": {
-      "Type": { "value": "Application", "comment": "", "precedingComment": "" },
-      "Name": { "value": "Foo Viewer", "comment": " inline comment", "precedingComment": "# precedingComment of an entry\n" },
-      "Exec": { "value": "fooview %F", "comment": "", "precedingComment": "" },
-      "Icon": { "value": "fooview", "comment": "", "precedingComment": "" }
+      "Type": { "value": "Application", "comment": "", "precedingComment": [] },
+      "Name": { "value": "Foo Viewer", "comment": " inline comment", "precedingComment": ["precedingComment of an entry"] },
+      "Exec": { "value": "fooview %F", "comment": "", "precedingComment": [] },
+      "Icon": { "value": "fooview", "comment": "", "precedingComment": [] }
     }
   }
 }
